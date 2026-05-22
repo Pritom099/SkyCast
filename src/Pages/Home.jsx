@@ -42,6 +42,48 @@ const Home = () => {
 
     return (
         <div>
+            <div className="mx-10 md:mx-30 flex items-center gap-2 mb-5">
+
+                {/* INPUT WRAPPER */}
+                <div className="flex items-center  bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-orange-300">
+
+                    {/* Search Icon */}
+                    <svg
+                        className="h-5 w-5 text-gray-400 mr-2"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                    >
+                        <g
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                            strokeWidth="2.5"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+
+                    {/* Input */}
+                    <input
+                        type="search"
+                        placeholder="Search city..."
+                        className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                    />
+                </div>
+
+                {/* BUTTON */}
+                <button
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl shadow-md transition-all duration-200"
+                    type="button"
+                >
+                    Search
+                </button>
+            </div>
+
+
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:mx-20 p-4">
 
                 {/* LEFT SIDE */}
