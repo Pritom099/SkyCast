@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 
-const Card = () => {
+const Card = ({city = "Dhaka"}) => {
     const [weather, setWeather] = useState(null);
     const [air, setAir] = useState(null);
 
@@ -17,7 +17,7 @@ const Card = () => {
 
                 // 🌤 Weather API
                 const res1 = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?q=Dhaka&appid=${API_KEY}&units=metric`
+                    `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
                 );
                 const weatherData = await res1.json();
 
@@ -44,7 +44,7 @@ const Card = () => {
         };
 
         fetchData();
-    }, []);
+    }, [city]);
 
     const getAQILabel = (aqi) => {
         switch (aqi) {

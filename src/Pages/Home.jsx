@@ -8,12 +8,17 @@ import { useEffect, useState } from "react";
 
 const Home = () => {
     const [tomorrow, setTomorrow] = useState(null);
+    const [city, setCity] = useState("Dhaka");
+    const [inputValue, setInputValue] = useState("");
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const fetchTomorrow = async () => {
             try {
+                setLoading(true);
                 const API_KEY = import.meta.env.VITE_API_KEY;
                 const res = await fetch(
-                    `https://api.openweathermap.org/data/2.5/forecast?q=Cumilla&appid=${API_KEY}&units=metric`
+                    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
                 );
                 const data = await res.json();
                 if (data.cod !== "200") {
@@ -23,13 +28,14 @@ const Home = () => {
                 // 👉 next day দুপুর approx (index 8-12 এর মধ্যে ভালো)
                 const tomorrowData = data.list[8];
                 setTomorrow(tomorrowData);
+                setLoading(false);
             } catch (err) {
                 console.log(err);
             }
         };
 
         fetchTomorrow();
-    }, []);
+    }, [city]);
 
     const getWeatherLabel = (main) => {
         if (main === "Rain") return "Rainy 🌧️";
@@ -69,12 +75,14 @@ const Home = () => {
                     <input
                         type="search"
                         placeholder="Search city..."
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
                         className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-400"
                     />
                 </div>
 
                 {/* BUTTON */}
-                <button
+                <button onClick={() => setCity(inputValue)}
                     className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl shadow-md transition-all duration-200"
                     type="button"
                 >
@@ -91,13 +99,13 @@ const Home = () => {
                     <div className="grid grid-rows-2 gap-5 h-full">
 
                         <div>
-                            <Card></Card>
+                            <Card city={city}></Card>
                         </div>
 
                         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-10 mr-20">
                             <div className="col-span-2">
 
-                                <TemperatureChart city="Dhaka"></TemperatureChart>
+                                <TemperatureChart city={city}></TemperatureChart>
                             </div>
 
                             <div className="card  bg-white shadow-sm rounded-2xl text-black" style={{
@@ -112,21 +120,21 @@ const Home = () => {
 
                                         <div>
                                             <p className="text-lg">Tomorrow</p>
-                                            <h1 className="text-2xl font-semibold">Cumilla</h1>
+                                            <h1 className="text-2xl font-semibold">{city}</h1>
                                         </div>
                                     </div>
 
                                     <div>
                                         <h1 className="text-3xl">
-                                            {tomorrow?.main?.temp
-                                                ? `${tomorrow.main.temp.toFixed(0)}°C`
-                                                : "Loading..."}
+                                            {loading
+                                                ? "Loading..."
+                                                : `${tomorrow?.main?.temp.toFixed(0)}°C`}
                                         </h1>
 
                                         <p>
-                                            {tomorrow
-                                                ? getWeatherLabel(tomorrow.weather[0].main)
-                                                : "..."}
+                                            {loading
+                                                ? "..."
+                                                : getWeatherLabel(tomorrow.weather[0].main)}
                                         </p>
                                     </div>
                                 </div>
