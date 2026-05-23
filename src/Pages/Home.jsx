@@ -144,7 +144,7 @@ const Home = () => {
                     </div>
                 </div>
 
-                <PredictCard></PredictCard>
+                <PredictCard city={city}></PredictCard>
 
             </div>
 
