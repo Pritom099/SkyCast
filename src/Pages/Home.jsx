@@ -5,12 +5,30 @@ import bgImg3 from "../assets/Screenshot 2026-05-18 230300.png";
 import TemperatureChart from "../Components/TemperatureChart";
 import PredictCard from "../Components/PredictCard";
 import { useEffect, useState } from "react";
+import { MdOutlineDelete } from "react-icons/md";
 
 const Home = () => {
     const [tomorrow, setTomorrow] = useState(null);
     const [city, setCity] = useState("Dhaka");
     const [inputValue, setInputValue] = useState("");
     const [loading, setLoading] = useState(true);
+    const [history, setHistory] = useState([]);
+
+    useEffect(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem("history")) || [];
+
+            // ensure it's array of objects
+            if (Array.isArray(saved)) {
+                setHistory(saved);
+            } else {
+                setHistory([]);
+            }
+        } catch (err) {
+            console.log("History parse error:", err);
+            setHistory([]);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchTomorrow = async () => {
@@ -43,6 +61,14 @@ const Home = () => {
         if (main === "Clear") return "Sunny ☀️";
         if (main === "Haze") return "Hazy 🌫️";
         return main;
+    };
+
+    const handleDelete = (cityName) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+        if (!confirmDelete) return; // ❌ cancel করলে কিছুই হবে না
+        const updatedHistory = history.filter(item => item.city !== cityName);
+        setHistory(updatedHistory);
+        localStorage.setItem("history", JSON.stringify(updatedHistory));
     };
 
 
@@ -82,7 +108,42 @@ const Home = () => {
                 </div>
 
                 {/* BUTTON */}
-                <button onClick={() => setCity(inputValue)}
+                <button onClick={async () => {
+                    if (!inputValue) return;
+
+                    const API_KEY = import.meta.env.VITE_API_KEY;
+
+                    const res = await fetch(
+                        `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&appid=${API_KEY}&units=metric`
+                    );
+
+                    const data = await res.json();
+
+                    if (data.cod !== 200) {
+                        console.log(data.message);
+                        return;
+                    }
+
+                    setCity(inputValue);
+
+                    const newItem = {
+                        city: data.name,
+                        country: data.sys.country,
+                        temp: data.main.temp,
+                    };
+
+                    let updatedHistory = [
+                        newItem,
+                        ...history.filter(item => item.city !== newItem.city)
+                    ];
+
+                    updatedHistory = updatedHistory.slice(0, 4);
+
+                    setHistory(updatedHistory);
+                    localStorage.setItem("history", JSON.stringify(updatedHistory));
+
+                    setInputValue("");
+                }}
                     className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl shadow-md transition-all duration-200"
                     type="button"
                 >
@@ -108,7 +169,7 @@ const Home = () => {
                                 <TemperatureChart city={city}></TemperatureChart>
                             </div>
 
-                            <div className="card  bg-white shadow-sm rounded-2xl text-black" style={{
+                            <div className="card h-80  bg-white shadow-sm rounded-2xl text-black" style={{
                                 backgroundImage: `url(${bgImg3})`,
                                 backgroundSize: "cover",
                                 backgroundPosition: "left",
@@ -149,10 +210,41 @@ const Home = () => {
             </div>
 
 
-            <div className="bg-white p-6 rounded-xl shadow h-full max-w-2xl md:ml-20 mt-10">
+            <div className="bg-white text-black p-6 rounded-xl shadow h-full max-w-xl md:ml-20 ">
                 <h1 className="text-2xl font-semibold">History</h1>
-
-
+                <div className="mt-4 space-y-2">
+                    {history.length === 0 ? (
+                        <p className="text-gray-500 text-2xl text-center py-5">
+                            No history found 🌍
+                        </p>
+                    ) : (
+                            history.map((item, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => setCity(item.city)}
+                                    className="bg-gray-200 hover:bg-orange-100 cursor-pointer border border-gray-400 px-5 py-4 rounded-lg"
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-10">
+                                            <p className="font-semibold">
+                                                {item?.city || item}, {item?.country || ""}
+                                            </p>
+                                            <p className="text-lg font-bold text-orange-500">{item?.temp ? item.temp.toFixed(0) : "--"}°C</p>
+                                        </div>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(item.city);
+                                            }}
+                                            className="text-xl font-bold text-red-500 hover:text-red-700"
+                                        >
+                                            <MdOutlineDelete />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                </div>
             </div>
 
 

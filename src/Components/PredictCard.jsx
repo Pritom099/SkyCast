@@ -114,7 +114,11 @@ const PredictCard = ({ city = "Dhaka" }) => {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="text-4xl">
-                                    {item.weather[0].main === "Clouds" ? "☁️" : "☀️"}
+                                    {item.weather[0].main === "Clouds" ? "☁️" :
+                                        item.weather[0].main === "Rain" ? "🌧️" :
+                                            item.weather[0].main === "Clear" ? "☀️" :
+                                                item.weather[0].main === "Thunderstorm" ? "⛈️" :
+                                                    "🌤️"}
                                 </div>
 
                                 <div>
