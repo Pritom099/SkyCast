@@ -4,7 +4,7 @@
 🌤️ Weather App (Frontend Only)
 A modern weather application built with React + Vite that fetches real-time weather data using the OpenWeatherMap API.
 
-🚀 Features
+🚀 Features:
 🔍 Search weather by city name
 🌡️ Real-time temperature and weather conditions
 📊 Temperature chart visualization
@@ -13,13 +13,13 @@ A modern weather application built with React + Vite that fetches real-time weat
 🗑️ Delete history with confirmation alert
 🎨 Clean and responsive UI
 
-🛠️ Tech Stack
+🛠️ Tech Stack:
 React (Vite)
 Tailwind CSS
 OpenWeatherMap API
 React Icons
 
-📁 Project Structure
+📁 Project Structure:
 
 src/
 │
@@ -44,6 +44,7 @@ src/
 ├── App.jsx
 ├── main.jsx
 └── App.css
+
 
 ⚙️ Setup Instructions:
 
